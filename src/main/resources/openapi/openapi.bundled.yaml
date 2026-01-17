@@ -63,7 +63,7 @@ paths:
                     id: "prod_001"
                     name: "A4 Notebook"
                     description: "80 pages notebook"
-                    stationery: "Stationery"
+                    category: "Stationery"
                     price: 25.00
                     currency: "ZAR"
                     active: true
