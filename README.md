@@ -45,7 +45,6 @@ This codebase is structured to keep domain boundaries explicit and avoid mixing 
 - `domain/` — core business models and rules
 - `application/` — use-cases and orchestration
 - `infrastructure/` — persistence, integrations, external systems
-- `interfaces/` — HTTP controllers, request/response mapping
 
 Note: folder naming may vary, but the intent remains the same: domains stay clean and independent.
 
