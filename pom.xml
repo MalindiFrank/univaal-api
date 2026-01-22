@@ -119,6 +119,30 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.17.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/openapi.bundled.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>com.univaal.api.application.controller</apiPackage>
+                            <modelPackage>com.univaal.api.application.dto</modelPackage>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useSpringBoot3>true</useSpringBoot3>  <!-- Compatible with Spring Boot 4.x -->
+                                <useTags>true</useTags>  <!-- Groups operations by tags like 'public', 'admin' -->
+                                <skipDefaultInterface>true</skipDefaultInterface>  <!-- Avoids unnecessary defaults -->
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
