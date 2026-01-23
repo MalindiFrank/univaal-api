@@ -138,6 +138,7 @@
                                 <useSpringBoot3>true</useSpringBoot3>  <!-- Compatible with Spring Boot 4.x -->
                                 <useTags>true</useTags>  <!-- Groups operations by tags like 'public', 'admin' -->
                                 <skipDefaultInterface>true</skipDefaultInterface>  <!-- Avoids unnecessary defaults -->
+                                <openApiNullable>false</openApiNullable>
                             </configOptions>
                         </configuration>
                     </execution>
