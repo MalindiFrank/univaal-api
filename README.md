@@ -61,3 +61,40 @@ Frontend and other consumers should align to the spec and treat changes as versi
 
 This backend is an actively developed production MVP.  
 Changes are expected, but the system is being built with long-term stability and maintainability in mind.
+
+
+com/univaal/api/
+v1/
+publicapi/
+interfaces/
+controller/
+dto/
+mapper/
+application/
+service/
+admin/
+interfaces/
+controller/
+dto/
+mapper/
+application/
+service/
+system/
+interfaces/
+controller/
+dto/
+mapper/
+application/
+service/
+
+domain/
+model/
+repo/
+
+infrastructure/
+config/
+adapter/
+persistence/
+mapper/
+
+l
