@@ -17,7 +17,7 @@ This repository contains the backend API for the UniVaal MVP, built to productio
 Out of scope for the current MVP:
 - Inventory management and fulfillment domain
 - Delivery tracking domain
-- Operations/admin domain beyond MVP-level product/image management
+- Admin exists only for product and image management during MVP.
 
 ---
 
@@ -26,7 +26,9 @@ Out of scope for the current MVP:
 - **Design approach:** Domain-Driven Design (DDD)
 - **API strategy:** API-first development
 - **Specification:** OpenAPI is treated as the contract and integration reference
-- **Goal:** predictable behavior, clean boundaries, and maintainable evolution
+- **Goal:** predictable behavior, clean boundaries, and maintainable evolution   
+
+` Controller → Application → Domain → Adapter → DB `
 
 ---
 
@@ -36,6 +38,8 @@ Out of scope for the current MVP:
 - **Database:** PostgreSQL
 - **API Style:** REST (OpenAPI-driven)
 
+#### Run locally - ` ./mvnw spring-boot:run `
+
 ---
 
 ## Repository Structure (DDD-Oriented)
@@ -43,8 +47,9 @@ Out of scope for the current MVP:
 This codebase is structured to keep domain boundaries explicit and avoid mixing concerns:
 
 - `domain/` — core business models and rules
-- `application/` — use-cases and orchestration
 - `infrastructure/` — persistence, integrations, external systems
+- `v1/admin/application` — use-cases and orchestration
+- `v1/admin/interfaces` — delivery layer
 
 Note: folder naming may vary, but the intent remains the same: domains stay clean and independent.
 
@@ -52,7 +57,9 @@ Note: folder naming may vary, but the intent remains the same: domains stay clea
 
 ## API Contract
 
-The OpenAPI specification in this repo is the integration contract for UniVaal.  
+The OpenAPI specification in this repo is the integration contract for UniVaal.
+All updates go through the OpenAPI spec.   
+The API uses semantic versioning. Breaking changes are introduced in new major versions (like v2).   
 Frontend and other consumers should align to the spec and treat changes as versioned, reviewed contract updates.
 
 ---
@@ -61,40 +68,3 @@ Frontend and other consumers should align to the spec and treat changes as versi
 
 This backend is an actively developed production MVP.  
 Changes are expected, but the system is being built with long-term stability and maintainability in mind.
-
-
-com/univaal/api/
-v1/
-publicapi/
-interfaces/
-controller/
-dto/
-mapper/
-application/
-service/
-admin/
-interfaces/
-controller/
-dto/
-mapper/
-application/
-service/
-system/
-interfaces/
-controller/
-dto/
-mapper/
-application/
-service/
-
-domain/
-model/
-repo/
-
-infrastructure/
-config/
-adapter/
-persistence/
-mapper/
-
-l
