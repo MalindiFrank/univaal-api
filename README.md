@@ -1,15 +1,15 @@
 # UniVaal API (Backend)
 
+
 UniVaal is a production e-commerce platform serving university students in the Vaal region of South Africa.  
 This repository contains the backend API for the UniVaal MVP, built to production standards and designed to scale cleanly over time.
 
----
 
-## What This Service Does (MVP Scope)
+### What This Service Does (MVP Scope)
+
 
 - Exposes the public product catalog (including product images and category)
-- Supports cart and checkout flow
-- Handles payment confirmation
+- Supports cart, checkout flow, and handles payment confirmation
 - Creates orders and manages basic order status flow
 - Provides API-level admin capabilities for product and image management
 - Publishes a formal OpenAPI specification as the source of truth for integration
@@ -21,7 +21,8 @@ Out of scope for the current MVP:
 
 ---
 
-## Architectural Approach
+### Architectural Approach
+
 
 - **Design approach:** Layered domain separation, Domain-Driven inspired architecture.
 - **API strategy:** API-first development
@@ -32,7 +33,7 @@ Out of scope for the current MVP:
 
 ---
 
-## Tech Stack
+### Tech Stack
 
 - **Language:** Java
 - **Database:** PostgreSQL
@@ -42,16 +43,15 @@ Out of scope for the current MVP:
 
 ---
 
-## Repository Structure
+### Repository Structure
 
-This codebase is structured to keep domain boundaries explicit and avoid mixing concerns:
 
 - `domain/` — core business models and rules
 - `infrastructure/` — persistence, integrations, external systems
 - `v1/admin/application` — use-cases and orchestration
 - `v1/admin/interfaces` — delivery layer
 
-Note: folder naming may vary, but the intent remains the same: domains stay clean and independent.
+Note: folder naming may vary, but the intent remains the same: domains stay clean and independent, avoid mixing concerns.
 
 ---
 
@@ -60,11 +60,11 @@ Note: folder naming may vary, but the intent remains the same: domains stay clea
 The OpenAPI specification in this repo is the integration contract for UniVaal.
 All updates go through the OpenAPI spec.   
 The API uses semantic versioning. Breaking changes are introduced in new major versions (like v2).   
-Frontend and other consumers should align to the spec and treat changes as versioned, reviewed contract updates.
+Frontend should align to the spec and treat changes as versioned, reviewed contract updates.
 
 ---
 
-## Status
+### Status
 
 This backend is an actively developed production MVP.  
 Changes are expected, but the system is being built with long-term stability and maintainability in mind.
