@@ -42,7 +42,7 @@ Out of scope for the current MVP:
 
 ---
 
-## Repository Structure (DDD-Oriented)
+## Repository Structure
 
 This codebase is structured to keep domain boundaries explicit and avoid mixing concerns:
 
