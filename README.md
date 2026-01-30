@@ -23,7 +23,7 @@ Out of scope for the current MVP:
 
 ## Architectural Approach
 
-- **Design approach:** Domain-Driven Design (DDD)
+- **Design approach:** Layered domain separation, Domain-Driven inspired architecture.
 - **API strategy:** API-first development
 - **Specification:** OpenAPI is treated as the contract and integration reference
 - **Goal:** predictable behavior, clean boundaries, and maintainable evolution   
