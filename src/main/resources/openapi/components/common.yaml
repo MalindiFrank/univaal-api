@@ -1,0 +1,280 @@
+openapi: 3.1.0
+info:
+  title: UniVaal API Components
+  version: 1.0.0
+
+components:
+  schemas:
+    Product:
+      type: object
+      required: [id, name, price_cents, category, currency]
+      properties:
+        id: { type: string, examples: [prod_001] }
+        name: { type: string, examples: [A4 Notebook] }
+        description: { type: string, examples: [80 pages notebook] }
+        category:
+          type: string
+          description: Product category label used for filtering and browsing.
+          examples: [Stationery]
+        price_cents: { type: integer, examples: [2500] }
+        currency: { type: string, examples: [ZAR] }
+        active: { type: boolean, examples: [true] }
+        createdAt:
+          type: string
+          format: date-time
+          examples: ['2026-01-04T10:00:00Z']
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+
+    OrderItem:
+      type: object
+      required: [productId, productNameSnapshot, unitPrice_cents, quantity]
+      properties:
+        productId: { type: string, examples: [prod_001] }
+        productNameSnapshot: { type: string, examples: [A4 Notebook] }
+        unitPrice_cents: { type: integer, examples: [2500] }
+        quantity: { type: integer, examples: [2] }
+        lineTotal_cents:
+          type: integer
+          description: Present in responses only. Server-calculated.
+          examples: [5000]
+
+    OrderItemRequest:
+      type: object
+      required: [productId, productNameSnapshot, unitPrice_cents, quantity]
+      properties:
+        productId: { type: string, examples: [prod_001] }
+        productNameSnapshot: { type: string, examples: [A4 Notebook] }
+        unitPrice_cents: { type: integer, examples: [2500] }
+        quantity: { type: integer, examples: [2] }
+
+    Customer:
+      type: object
+      required: [name, email]
+      properties:
+        name: { type: string, examples: [John Doe] }
+        email: { type: string, examples: [john@example.com] }
+        phone: { type: string, examples: ['+27123456789'] }
+
+    DeliveryAddress:
+      type: object
+      properties:
+        residence: { type: string, examples: [UniVaal Res A] }
+        room: { type: string, examples: [B12] }
+        notes: { type: string, examples: [Leave at reception] }
+
+    Order:
+      type: object
+      properties:
+        id: { type: string, examples: [order_0001] }
+        status:
+          type: string
+          enum: [PAID, PURCHASED, OUT_FOR_DELIVERY, DELIVERED, REFUNDED]
+          examples: [PAID]
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        subtotal_cents: { type: integer, examples: [5000] }
+        shipping_cents: { type: integer, examples: [0] }
+        tax_cents: { type: integer, examples: [0] }
+        total_cents: { type: integer, examples: [5000] }
+        currency: { type: string, examples: [ZAR] }
+        customer: { $ref: '#/components/schemas/Customer' }
+        deliveryAddress: { $ref: '#/components/schemas/DeliveryAddress' }
+        payment:
+          type: object
+          properties:
+            provider: { type: string, examples: [payfast] }
+            providerPaymentId: { type: string, examples: [pf_ch_abc123] }
+            status: { type: string, examples: [captured] }
+        publicTrackingToken: { type: string, examples: [9f3a7c82b4e61d90f0a3] }
+        procurement:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [pending, purchased, unavailable]
+              examples: [pending]
+            procurementRef: { type: string, examples: [wh_453] }
+        audit:
+          type: object
+          properties:
+            clientIp: { type: string, examples: [197.210.70.1] }
+            userAgent: { type: string, examples: [Mozilla/5.0] }
+        createdAt:
+          type: string
+          format: date-time
+          examples: ['2026-01-04T10:03:00Z']
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ['2026-01-04T12:00:00Z']
+
+    OrderPublic:
+      type: object
+      properties:
+        orderId: { type: string, examples: [order_0001] }
+        status: { type: string, examples: [PAID] }
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        total_cents: { type: integer, examples: [5000] }
+        currency: { type: string, examples: [ZAR] }
+        deliveryAddress: { $ref: '#/components/schemas/DeliveryAddress' }
+        procurement:
+          type: object
+          properties:
+            status: { type: string, examples: [pending] }
+        createdAt:
+          type: string
+          format: date-time
+          examples: ['2026-01-04T10:03:00Z']
+
+    PaymentSessionRequest:
+      type: object
+      required: [items, customer, deliveryAddress]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemRequest'
+        customer: { $ref: '#/components/schemas/Customer' }
+        deliveryAddress: { $ref: '#/components/schemas/DeliveryAddress' }
+        metadata:
+          type: object
+          additionalProperties: true
+
+    PaymentSessionResponse:
+      type: object
+      properties:
+        paymentProvider: { type: string, examples: [payfast] }
+        paymentSessionId: { type: string, examples: [sess_abc123] }
+        redirectUrl: { type: string, examples: [https://payfast.co.za/checkout/sess_abc123] }
+        expiresAt:
+          type: string
+          format: date-time
+          examples: ['2026-01-05T10:00:00Z']
+
+    PaymentConfirmRequest:
+      type: object
+      required: [paymentToken, sessionId]
+      properties:
+        paymentToken: { type: string, examples: [pm_abc123] }
+        sessionId: { type: string, examples: [sess_abc123] }
+
+    PaymentWebhookPayload:
+      type: object
+      properties:
+        event: { type: string, examples: [payment_success] }
+        sessionId: { type: string, examples: [sess_abc123] }
+        providerPaymentId: { type: string, examples: [pf_ch_abc123] }
+        amount_cents: { type: integer, examples: [5000] }
+        currency: { type: string, examples: [ZAR] }
+        metadata:
+          type: object
+          additionalProperties: true
+
+    ApiResponse:
+      type: object
+      properties:
+        success: { type: boolean, examples: [true] }
+        data: { type: [object, 'null'] }
+        error: { type: [object, 'null'] }
+
+    Image:
+      type: object
+      required: [id, url]
+      properties:
+        id: { type: string, examples: [img_1] }
+        url:
+          type: string
+          format: uri
+          examples: [https://cdn.univaal.co.za/products/prod_001/main.webp]
+        alt: { type: string, examples: [A4 Notebook - front cover] }
+        position: { type: integer, examples: [0] }
+        meta:
+          type: object
+          properties:
+            width: { type: integer, examples: [1200] }
+            height: { type: integer, examples: [1600] }
+            format: { type: string, examples: [webp] }
+
+    Meta:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of products in the catalogue (for pagination).
+          examples: [1, 87]
+        page:
+          type: integer
+          description: Current page number.
+          examples: [1, 3]
+        limit:
+          type: integer
+          description: Number of items per page.
+          examples: [10, 50]
+        currency:
+          type: string
+          description: Default currency for prices (consistent across all products).
+          examples: [ZAR]
+
+    Links:
+      type: object
+      properties:
+        self:
+          type: string
+          format: uri-reference
+          description: URL to the current page of results.
+          examples: ["/products", "/products?page=2&category=Stationery"]
+        next:
+          type: [string, 'null']
+          format: uri-reference
+          description: URL to the next page (null if none).
+          examples: ["/products?page=2", null]
+        prev:
+          type: [string, 'null']
+          format: uri-reference
+          description: URL to the previous page (null if none).
+          examples: ["/products?page=1", null]
+
+  responses:
+    ErrorResponse:
+      description: Error response (consistent envelope)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data: { type: 'null' }
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code: { type: string, examples: [NOT_FOUND, VALIDATION_ERROR] }
+                    message: { type: string, examples: [Resource not found, Invalid request data] }
+                  required: [code, message]
+              meta:
+                $ref: '#/components/schemas/Meta'
+              links:
+                $ref: '#/components/schemas/Links'
+
+  parameters:
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      schema: { type: string }
+      required: false
+      description: Idempotency key for safe retries
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+

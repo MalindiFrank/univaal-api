@@ -1,10 +1,11 @@
 openapi: 3.1.0
 info:
   title: UniVaal API
-  version: "1.0.0"
+  version: 1.0.0
   description: UniVaal MVP API – validated for Swagger Editor/UI (images + full examples)
 servers:
   - url: https://api.univaal.example
+
 paths:
   /products:
     get:
@@ -17,36 +18,56 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductsList'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                required: [data]
               examples:
                 sample:
                   value:
-                    - id: "prod_001"
-                      name: "A4 Notebook"
-                      description: "80 pages notebook"
-                      category: "Stationery"
-                      price: 25.00
-                      currency: "ZAR"
-                      active: true
-                      createdAt: "2026-01-04T10:00:00Z"
-                      images:
-                        - url: "https://cdn.univaal.co.za/products/prod_001/main.webp"
-                          alt: "A4 Notebook front"
-                          position: 0
-                          meta:
-                            width: 1200
-                            height: 1600
-                            format: "webp"
-                        - url: "https://cdn.univaal.co.za/products/prod_001/side.webp"
-                          alt: "Side view"
-                          position: 1
+                    data:
+                      - id: prod_001
+                        name: A4 Notebook
+                        description: 80 pages notebook
+                        category: Stationery
+                        price_cents: 2500
+                        currency: ZAR
+                        active: true
+                        createdAt: '2026-01-04T10:00:00Z'
+                        images:
+                          - url: https://cdn.univaal.co.za/products/prod_001/main.webp
+                            alt: A4 Notebook front
+                            position: 0
+                            meta:
+                              width: 1200
+                              height: 1600
+                              format: webp
+                          - url: https://cdn.univaal.co.za/products/prod_001/side.webp
+                            alt: Side view
+                            position: 1
+                    meta:
+                      total: 1
+                      page: 1
+                      limit: 50
+                      currency: ZAR
+                    links:
+                      self: /products
+                      next: null
+                      prev: null
+
   /products/{productId}:
     parameters:
       - name: productId
         in: path
         required: true
-        schema:
-          type: string
+        schema: { type: string }
     get:
       tags: [public]
       summary: Get product by id
@@ -56,31 +77,50 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Product'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                required: [data]
               examples:
                 sample:
                   value:
-                    id: "prod_001"
-                    name: "A4 Notebook"
-                    description: "80 pages notebook"
-                    category: "Stationery"
-                    price: 25.00
-                    currency: "ZAR"
-                    active: true
-                    createdAt: "2026-01-04T10:00:00Z"
-                    images:
-                      - url: "https://cdn.univaal.co.za/products/prod_001/main.webp"
-                        alt: "A4 Notebook front"
-                        position: 0
-                        meta:
-                          width: 1200
-                          height: 1600
-                          format: "webp"
-                      - url: "https://cdn.univaal.co.za/products/prod_001/side.webp"
-                        alt: "Side view"
-                        position: 1
+                    data:
+                      id: prod_001
+                      name: A4 Notebook
+                      description: 80 pages notebook
+                      category: Stationery
+                      price_cents: 2500
+                      currency: ZAR
+                      active: true
+                      createdAt: '2026-01-04T10:00:00Z'
+                      images:
+                        - url: https://cdn.univaal.co.za/products/prod_001/main.webp
+                          alt: A4 Notebook front
+                          position: 0
+                          meta:
+                            width: 1200
+                            height: 1600
+                            format: webp
+                        - url: https://cdn.univaal.co.za/products/prod_001/side.webp
+                          alt: Side view
+                          position: 1
+                    meta:
+                      total: 1
+                      page: 1
+                      limit: 1
+                      currency: ZAR
+                    links:
+                      self: /products/prod_001
+                      next: null
+                      prev: null
         '404':
           $ref: '#/components/responses/ErrorResponse'
+
   /payments/session:
     post:
       tags: [public]
@@ -98,18 +138,17 @@ paths:
               sample:
                 value:
                   items:
-                    - productId: "prod_001"
-                      productNameSnapshot: "A4 Notebook"
-                      unitPriceSnapshot: 25.00
+                    - productId: prod_001
+                      productNameSnapshot: A4 Notebook
+                      unitPrice_cents: 2500
                       quantity: 2
-                      lineTotal: 50.00
                   customer:
-                    name: "John Doe"
-                    email: "john@example.com"
-                    phone: "+27123456789"
+                    name: John Doe
+                    email: john@example.com
+                    phone: '+27123456789'
                   deliveryAddress:
-                    residence: "UniVaal Res A"
-                    room: "B12"
+                    residence: UniVaal Res A
+                    room: B12
       responses:
         '201':
           description: Session created
@@ -120,12 +159,13 @@ paths:
               examples:
                 sample:
                   value:
-                    paymentProvider: "payfast"
-                    paymentSessionId: "sess_abc123"
-                    redirectUrl: "https://payfast.co.za/checkout/sess_abc123"
-                    expiresAt: "2026-01-05T10:00:00Z"
+                    paymentProvider: payfast
+                    paymentSessionId: sess_abc123
+                    redirectUrl: https://payfast.co.za/checkout/sess_abc123
+                    expiresAt: '2026-01-05T10:00:00Z'
         '400':
           $ref: '#/components/responses/ErrorResponse'
+
   /payments/confirm:
     post:
       tags: [public]
@@ -142,8 +182,8 @@ paths:
             examples:
               sample:
                 value:
-                  paymentToken: "pm_abc123"
-                  sessionId: "sess_abc123"
+                  paymentToken: pm_abc123
+                  sessionId: sess_abc123
       responses:
         '200':
           description: Accepted
@@ -155,6 +195,7 @@ paths:
                   status:
                     type: string
                     examples: [processing]
+
   /webhooks/payments:
     post:
       tags: [webhook]
@@ -164,8 +205,7 @@ paths:
         - name: X-Webhook-Signature
           in: header
           required: true
-          schema:
-            type: string
+          schema: { type: string }
       requestBody:
         required: true
         content:
@@ -176,12 +216,12 @@ paths:
               payment_success:
                 value:
                   event: payment_success
-                  providerPaymentId: "pf_ch_abc123"
-                  sessionId: "sess_abc123"
+                  providerPaymentId: pf_ch_abc123
+                  sessionId: sess_abc123
                   amount_cents: 5000
-                  currency: "ZAR"
+                  currency: ZAR
                   metadata:
-                    cartHash: "prod_001:2"
+                    cartHash: prod_001:2
       responses:
         '200':
           description: Processed
@@ -194,13 +234,13 @@ paths:
                   value:
                     success: true
                     data: {}
+
   /order/track/{publicToken}:
     parameters:
       - name: publicToken
         in: path
         required: true
-        schema:
-          type: string
+        schema: { type: string }
     get:
       tags: [public]
       summary: Track order by public token
@@ -211,27 +251,44 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderPublic'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OrderPublic'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                required: [data]
               examples:
                 sample:
                   value:
-                    orderId: "order_0001"
-                    status: "PAID"
-                    items:
-                      - productId: "prod_001"
-                        productNameSnapshot: "A4 Notebook"
-                        unitPriceSnapshot: 25.00
-                        quantity: 2
-                        lineTotal: 50.00
-                    totalAmount: 50.00
-                    deliveryAddress:
-                      residence: "UniVaal Res A"
-                      room: "B12"
-                    procurement:
-                      status: "pending"
-                    createdAt: "2026-01-04T10:03:00Z"
+                    data:
+                      orderId: order_0001
+                      status: PAID
+                      items:
+                        - productId: prod_001
+                          productNameSnapshot: A4 Notebook
+                          unitPrice_cents: 2500
+                          quantity: 2
+                          lineTotal_cents: 5000
+                      total_cents: 5000
+                      currency: ZAR
+                      deliveryAddress:
+                        residence: UniVaal Res A
+                        room: B12
+                      procurement:
+                        status: pending
+                      createdAt: '2026-01-04T10:03:00Z'
+                    meta:
+                      currency: ZAR
+                    links:
+                      self: /order/track/9f3a7c82b4e61d90f0a3
+                      next: null
+                      prev: null
         '404':
           $ref: '#/components/responses/ErrorResponse'
+
   /admin/orders:
     get:
       tags: [admin]
@@ -247,36 +304,52 @@ paths:
             enum: [PAID, PURCHASED, OUT_FOR_DELIVERY, DELIVERED, REFUNDED]
         - name: page
           in: query
-          schema:
-            type: integer
-            default: 1
+          schema: { type: integer, default: 1 }
         - name: limit
           in: query
-          schema:
-            type: integer
-            default: 20
+          schema: { type: integer, default: 20 }
       responses:
         '200':
           description: Orders list
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrdersListResponse'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+                  meta:
+                    $ref: '#/components/schemas/Meta'
+                  links:
+                    $ref: '#/components/schemas/Links'
+                required: [data]
               examples:
                 sample:
                   value:
-                    items:
-                      - id: "order_0001"
-                        status: "PAID"
-                        totalAmount: 50.00
-                        createdAt: "2026-01-04T10:03:00Z"
+                    data:
+                      - id: order_0001
+                        status: PAID
+                        total_cents: 5000
+                        currency: ZAR
+                        createdAt: '2026-01-04T10:03:00Z'
+                    meta:
+                      total: 1
+                      page: 1
+                      limit: 20
+                      currency: ZAR
+                    links:
+                      self: /admin/orders?page=1&limit=20
+                      next: null
+                      prev: null
+
   /admin/orders/{orderId}:
     parameters:
       - name: orderId
         in: path
         required: true
-        schema:
-          type: string
+        schema: { type: string }
     get:
       tags: [admin]
       security:
@@ -292,23 +365,27 @@ paths:
               examples:
                 sample:
                   value:
-                    id: "order_0001"
-                    status: "PAID"
+                    id: order_0001
+                    status: PAID
                     items:
-                      - productId: "prod_001"
-                        productNameSnapshot: "A4 Notebook"
-                        unitPriceSnapshot: 25.00
+                      - productId: prod_001
+                        productNameSnapshot: A4 Notebook
+                        unitPrice_cents: 2500
                         quantity: 2
-                        lineTotal: 50.00
-                    totalAmount: 50.00
+                        lineTotal_cents: 5000
+                    subtotal_cents: 5000
+                    shipping_cents: 0
+                    tax_cents: 0
+                    total_cents: 5000
+                    currency: ZAR
                     customer:
-                      name: "John Doe"
-                      email: "john@example.com"
+                      name: John Doe
+                      email: john@example.com
                     deliveryAddress:
-                      residence: "UniVaal Res A"
-                      room: "B12"
-                    publicTrackingToken: "9f3a7c82b4e61d90f0a3"
-                    createdAt: "2026-01-04T10:03:00Z"
+                      residence: UniVaal Res A
+                      room: B12
+                    publicTrackingToken: 9f3a7c82b4e61d90f0a3
+                    createdAt: '2026-01-04T10:03:00Z'
         '404':
           $ref: '#/components/responses/ErrorResponse'
     patch:
@@ -339,10 +416,10 @@ paths:
             examples:
               sample:
                 value:
-                  status: "PURCHASED"
+                  status: PURCHASED
                   procurement:
-                    status: "purchased"
-                    procurementRef: "wh_453"
+                    status: purchased
+                    procurementRef: wh_453
       responses:
         '200':
           description: Updated
@@ -353,16 +430,16 @@ paths:
               examples:
                 sample:
                   value:
-                    id: "order_0001"
-                    status: "PURCHASED"
-                    updatedAt: "2026-01-04T12:00:00Z"
+                    id: order_0001
+                    status: PURCHASED
+                    updatedAt: '2026-01-04T12:00:00Z'
+
   /admin/orders/{orderId}/resend-email:
     parameters:
       - name: orderId
         in: path
         required: true
-        schema:
-          type: string
+        schema: { type: string }
     post:
       tags: [admin]
       security:
@@ -380,6 +457,7 @@ paths:
                   value:
                     success: true
                     data: {}
+
   /admin/uploads/presign:
     post:
       tags: [admin]
@@ -397,10 +475,10 @@ paths:
               properties:
                 filename:
                   type: string
-                  examples: ["prod_001_main.webp"]
+                  examples: [prod_001_main.webp]
                 contentType:
                   type: string
-                  examples: ["image/webp"]
+                  examples: [image/webp]
                 expiresIn:
                   type: integer
                   description: Expiration seconds for the presign URL
@@ -415,25 +493,27 @@ paths:
                 properties:
                   uploadUrl:
                     type: string
-                    examples: ["https://s3.amazonaws.com/your-bucket/prod_001_main.webp?X-Amz-..."]
+                    examples:
+                      - https://s3.amazonaws.com/your-bucket/prod_001_main.webp?X-Amz-...
                   method:
                     type: string
-                    examples: ["PUT"]
+                    examples: [PUT]
                   fields:
-                    type: [object, "null"]
+                    type: [object, 'null']
+                    additionalProperties: true
               examples:
                 sample:
                   value:
-                    uploadUrl: "https://s3.amazonaws.com/your-bucket/prod_001_main.webp?X-Amz-..."
-                    method: "PUT"
+                    uploadUrl: https://s3.amazonaws.com/your-bucket/prod_001_main.webp?X-Amz-...
+                    method: PUT
                     fields: {}
+
   /admin/products/{productId}/images:
     parameters:
       - name: productId
         in: path
         required: true
-        schema:
-          type: string
+        schema: { type: string }
     post:
       tags: [admin]
       security:
@@ -451,10 +531,12 @@ paths:
                 url:
                   type: string
                   format: uri
-                  examples: ["https://cdn.univaal.co.za/products/prod_001/main.webp"]
+                  examples:
+                    - https://cdn.univaal.co.za/products/prod_001/main.webp
                 alt:
                   type: string
-                  examples: ["A4 Notebook - front cover"]
+                  examples:
+                    - A4 Notebook - front cover
                 position:
                   type: integer
                   examples: [0]
@@ -464,8 +546,8 @@ paths:
             examples:
               sample:
                 value:
-                  url: "https://cdn.univaal.co.za/products/prod_001/main.webp"
-                  alt: "A4 Notebook - front cover"
+                  url: https://cdn.univaal.co.za/products/prod_001/main.webp
+                  alt: A4 Notebook - front cover
                   position: 0
       responses:
         '201':
@@ -477,26 +559,25 @@ paths:
               examples:
                 sample:
                   value:
-                    id: "img_1"
-                    url: "https://cdn.univaal.co.za/products/prod_001/main.webp"
-                    alt: "A4 Notebook - front cover"
+                    id: img_1
+                    url: https://cdn.univaal.co.za/products/prod_001/main.webp
+                    alt: A4 Notebook - front cover
                     position: 0
                     meta:
                       width: 1200
                       height: 1600
-                      format: "webp"
+                      format: webp
+
   /admin/products/{productId}/images/{imageId}:
     parameters:
       - name: productId
         in: path
         required: true
-        schema:
-          type: string
+        schema: { type: string }
       - name: imageId
         in: path
         required: true
-        schema:
-          type: string
+        schema: { type: string }
     patch:
       tags: [admin]
       security:
@@ -514,7 +595,7 @@ paths:
             examples:
               sample:
                 value:
-                  alt: "Updated alt text"
+                  alt: Updated alt text
                   position: 0
       responses:
         '200':
@@ -526,14 +607,14 @@ paths:
               examples:
                 sample:
                   value:
-                    id: "img_1"
-                    url: "https://cdn.univaal.co.za/products/prod_001/main.webp"
-                    alt: "Updated alt text"
+                    id: img_1
+                    url: https://cdn.univaal.co.za/products/prod_001/main.webp
+                    alt: Updated alt text
                     position: 0
                     meta:
                       width: 1200
                       height: 1600
-                      format: "webp"
+                      format: webp
     delete:
       tags: [admin]
       security:
@@ -542,77 +623,119 @@ paths:
       responses:
         '204':
           description: Deleted
+
 components:
   schemas:
     Product:
       type: object
-      required: [id, name, price, category]
+      required: [id, name, price_cents, category, currency]
       properties:
         id:
           type: string
-          examples: ["prod_001"]
+          examples: [prod_001]
         name:
           type: string
-          examples: ["A4 Notebook"]
+          examples: [A4 Notebook]
         description:
           type: string
-          examples: ["80 pages notebook"]
+          examples: [80 pages notebook]
         category:
           type: string
           description: Product category label used for filtering and browsing.
-          examples: [ "Stationery" ]
-        price:
-          type: number
-          format: float
-          examples: [25.00]
+          examples: [Stationery]
+        price_cents:
+          type: integer
+          examples: [2500]
         currency:
           type: string
-          examples: ["ZAR"]
+          examples: [ZAR]
         active:
           type: boolean
           examples: [true]
         createdAt:
           type: string
           format: date-time
-          examples: ["2026-01-04T10:00:00Z"]
+          examples: ['2026-01-04T10:00:00Z']
         images:
           type: array
           items:
             $ref: '#/components/schemas/Image'
-    ProductsList:
-      type: array
-      items:
-        $ref: '#/components/schemas/Product'
+
     OrderItem:
       type: object
-      required: [productId, productNameSnapshot, unitPriceSnapshot, quantity]
+      required: [productId, productNameSnapshot, unitPrice_cents, quantity]
       properties:
-        productId: { type: string, examples: ["prod_001"]}
-        productNameSnapshot: { type: string, examples: ["A4 Notebook"]}
-        unitPriceSnapshot: { type: number, format: float, examples: [25.00]}
-        quantity: { type: integer, examples: [2]}
-        lineTotal: { type: number, format: float, examples: [50.00]}
+        productId:
+          type: string
+          examples: [prod_001]
+        productNameSnapshot:
+          type: string
+          examples: [A4 Notebook]
+        unitPrice_cents:
+          type: integer
+          examples: [2500]
+        quantity:
+          type: integer
+          examples: [2]
+        lineTotal_cents:
+          type: integer
+          description: Present in responses only. Server-calculated.
+          examples: [5000]
+
+    OrderItemRequest:
+      type: object
+      required: [productId, productNameSnapshot, unitPrice_cents, quantity]
+      properties:
+        productId:
+          type: string
+          examples: [prod_001]
+        productNameSnapshot:
+          type: string
+          examples: [A4 Notebook]
+        unitPrice_cents:
+          type: integer
+          examples: [2500]
+        quantity:
+          type: integer
+          examples: [2]
+
     Customer:
       type: object
       required: [name, email]
       properties:
-        name: { type: string, examples: ["John Doe"]}
-        email: { type: string, examples: ["john@example.com"]}
-        phone: { type: string, examples: ["+27123456789"]}
+        name:
+          type: string
+          examples: [John Doe]
+        email:
+          type: string
+          examples: [john@example.com]
+        phone:
+          type: string
+          examples: ['+27123456789']
+
     DeliveryAddress:
       type: object
       properties:
-        residence: { type: string, examples: ["UniVaal Res A"]}
-        room: { type: string, examples: ["B12"]}
-        notes: { type: string, examples: ["Leave at reception"]}
+        residence:
+          type: string
+          examples: [UniVaal Res A]
+        room:
+          type: string
+          examples: [B12]
+        notes:
+          type: string
+          examples: [Leave at reception]
+
     Order:
       type: object
       properties:
-        id: { type: string, examples: ["order_0001"]}
+        id:
+          type: string
+          examples: [order_0001]
         status:
           type: string
           enum: [PAID, PURCHASED, OUT_FOR_DELIVERY, DELIVERED, REFUNDED]
-          examples: ["PAID"]
+          examples: [PAID]
         items:
           type: array
           items:
@@ -626,10 +749,12 @@ components:
         tax_cents:
           type: integer
           examples: [0]
-        totalAmount:
-          type: number
-          format: float
-          examples: [50.00]
+        total_cents:
+          type: integer
+          examples: [5000]
+        currency:
+          type: string
+          examples: [ZAR]
         customer:
           $ref: '#/components/schemas/Customer'
         deliveryAddress:
@@ -637,49 +762,65 @@ components:
         payment:
           type: object
           properties:
-            provider: { type: string, examples: ["payfast"]}
-            providerPaymentId: { type: string, examples: ["pf_ch_abc123"]}
-            status: { type: string, examples: ["captured"]}
+            provider:
+              type: string
+              examples: [payfast]
+            providerPaymentId:
+              type: string
+              examples: [pf_ch_abc123]
+            status:
+              type: string
+              examples: [captured]
         publicTrackingToken:
           type: string
-          examples: ["9f3a7c82b4e61d90f0a3"]
+          examples: [9f3a7c82b4e61d90f0a3]
         procurement:
           type: object
           properties:
             status:
               type: string
               enum: [pending, purchased, unavailable]
-              examples: ["pending"]
+              examples: [pending]
             procurementRef:
               type: string
-              examples: ["wh_453"]
+              examples: [wh_453]
         audit:
           type: object
           properties:
             clientIp:
               type: string
-              examples: ["197.210.70.1"]
+              examples: [197.210.70.1]
             userAgent:
               type: string
-              examples: ["Mozilla/5.0"]
+              examples: [Mozilla/5.0]
         createdAt:
           type: string
           format: date-time
-          examples: ["2026-01-04T10:03:00Z"]
+          examples: ['2026-01-04T10:03:00Z']
         updatedAt:
           type: string
           format: date-time
-          examples: ["2026-01-04T12:00:00Z"]
+          examples: ['2026-01-04T12:00:00Z']
+
     OrderPublic:
       type: object
       properties:
-        orderId: { type: string, examples: ["order_0001"]}
-        status: { type: string, examples: ["PAID"]}
+        orderId:
+          type: string
+          examples: [order_0001]
+        status:
+          type: string
+          examples: [PAID]
         items:
           type: array
           items:
             $ref: '#/components/schemas/OrderItem'
-        totalAmount: { type: number, examples: [50.00]}
+        total_cents:
+          type: integer
+          examples: [5000]
+        currency:
+          type: string
+          examples: [ZAR]
         deliveryAddress:
           $ref: '#/components/schemas/DeliveryAddress'
         procurement:
@@ -687,11 +828,12 @@ components:
           properties:
             status:
               type: string
-              examples: ["pending"]
+              examples: [pending]
         createdAt:
           type: string
           format: date-time
-          examples: ["2026-01-04T10:03:00Z"]
+          examples: ['2026-01-04T10:03:00Z']
+
     PaymentSessionRequest:
       type: object
       required: [items, customer, deliveryAddress]
@@ -699,7 +841,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/OrderItem'
+            $ref: '#/components/schemas/OrderItemRequest'
         customer:
           $ref: '#/components/schemas/Customer'
         deliveryAddress:
@@ -707,37 +849,57 @@ components:
         metadata:
           type: object
           additionalProperties: true
+
     PaymentSessionResponse:
       type: object
       properties:
-        paymentProvider: { type: string, examples: ["payfast"]}
-        paymentSessionId: { type: string, examples: ["sess_abc123"]}
-        redirectUrl: { type: string, examples: ["https://payfast.co.za/checkout/sess_abc123"]}
-        expiresAt: { type: string, format: date-time, examples: ["2026-01-05T10:00:00Z"]}
+        paymentProvider:
+          type: string
+          examples: [payfast]
+        paymentSessionId:
+          type: string
+          examples: [sess_abc123]
+        redirectUrl:
+          type: string
+          examples: [https://payfast.co.za/checkout/sess_abc123]
+        expiresAt:
+          type: string
+          format: date-time
+          examples: ['2026-01-05T10:00:00Z']
+
     PaymentConfirmRequest:
       type: object
       required: [paymentToken, sessionId]
       properties:
-        paymentToken: { type: string, examples: ["pm_abc123"]}
-        sessionId: { type: string, examples: ["sess_abc123"]}
+        paymentToken:
+          type: string
+          examples: [pm_abc123]
+        sessionId:
+          type: string
+          examples: [sess_abc123]
+
     PaymentWebhookPayload:
       type: object
       properties:
-        event: { type: string, examples: ["payment_success"]}
-        sessionId: { type: string, examples: ["sess_abc123"]}
-        providerPaymentId: { type: string, examples: ["pf_ch_abc123"]}
-        amount_cents: { type: integer, examples: [5000]}
-        currency: { type: string, examples: ["ZAR"]}
+        event:
+          type: string
+          examples: [payment_success]
+        sessionId:
+          type: string
+          examples: [sess_abc123]
+        providerPaymentId:
+          type: string
+          examples: [pf_ch_abc123]
+        amount_cents:
+          type: integer
+          examples: [5000]
+        currency:
+          type: string
+          examples: [ZAR]
         metadata:
           type: object
           additionalProperties: true
-    OrdersListResponse:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Order'
+
     ApiResponse:
       type: object
       properties:
@@ -745,48 +907,112 @@ components:
           type: boolean
           examples: [true]
         data:
-          type: [object, "null"]
+          type: [object, 'null']
         error:
-          type: [object, "null"]
+          type: [object, 'null']
+
     Image:
       type: object
       required: [id, url]
       properties:
         id:
           type: string
-          examples: ["img_1"]
+          examples: [img_1]
         url:
           type: string
           format: uri
-          examples: ["https://cdn.univaal.co.za/products/prod_001/main.webp"]
+          examples: [https://cdn.univaal.co.za/products/prod_001/main.webp]
         alt:
           type: string
-          examples: ["A4 Notebook - front cover"]
+          examples: [A4 Notebook - front cover]
         position:
           type: integer
           examples: [0]
         meta:
           type: object
           properties:
-            width: { type: integer, examples: [1200]}
-            height: { type: integer, examples: [1600]}
-            format: { type: string, examples: ["webp"]}
+            width:
+              type: integer
+              examples: [1200]
+            height:
+              type: integer
+              examples: [1600]
+            format:
+              type: string
+              examples: [webp]
+
+    Meta:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of products in the catalogue (for pagination).
+          examples: [1, 87]
+        page:
+          type: integer
+          description: Current page number.
+          examples: [1, 3]
+        limit:
+          type: integer
+          description: Number of items per page.
+          examples: [10, 50]
+        currency:
+          type: string
+          description: Default currency for prices (consistent across all products).
+          examples: [ZAR]
+
+    Links:
+      type: object
+      properties:
+        self:
+          type: string
+          format: uri-reference
+          description: URL to the current page of results.
+          examples: ["/products", "/products?page=2&category=Stationery"]
+        next:
+          type: [string, 'null']
+          format: uri-reference
+          description: URL to the next page (null if none).
+          examples: ["/products?page=2", null]
+        prev:
+          type: [string, 'null']
+          format: uri-reference
+          description: URL to the previous page (null if none).
+          examples: ["/products?page=1", null]
+
   responses:
     ErrorResponse:
-      description: Error
+      description: Error response (consistent envelope)
       content:
         application/json:
           schema:
             type: object
             properties:
-              message:
-                type: string
-                examples: ["Invalid request"]
+              data:
+                type: 'null'
+              errors:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      examples: [NOT_FOUND, VALIDATION_ERROR]
+                    message:
+                      type: string
+                      examples: [Resource not found, Invalid request data]
+                  required: [code, message]
+              meta:
+                $ref: '#/components/schemas/Meta'
+              links:
+                $ref: '#/components/schemas/Links'
+
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
   parameters:
     IdempotencyKey:
       name: Idempotency-Key

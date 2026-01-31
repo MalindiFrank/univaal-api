@@ -1,0 +1,36 @@
+openapi: 3.1.0
+info:
+  title: UniVaal Order API
+  version: 1.0.0
+servers:
+  - url: https://api.univaal.example
+
+paths:
+  /order/track/{publicToken}:
+    parameters:
+      - name: publicToken
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [public]
+      summary: Track order by public token
+      description: Public tracking view — no auth required. Returns limited order info.
+      responses:
+        '200':
+          description: Order tracking data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: './components/common.yaml#/components/schemas/OrderPublic'
+                  meta:
+                    $ref: './components/common.yaml#/components/schemas/Meta'
+                  links:
+                    $ref: './components/common.yaml#/components/schemas/Links'
+                required: [data]
+        '404':
+          $ref: './components/common.yaml#/components/responses/ErrorResponse'
+
