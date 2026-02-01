@@ -499,7 +499,7 @@ paths:
                     type: string
                     examples: [PUT]
                   fields:
-                    type: [object, 'null']
+                    type: object
                     additionalProperties: true
               examples:
                 sample:
@@ -907,9 +907,11 @@ components:
           type: boolean
           examples: [true]
         data:
-          type: [object, 'null']
+          type: object
+          additionalProperties: true
         error:
-          type: [object, 'null']
+          type: object
+          additionalProperties: true
 
     Image:
       type: object
@@ -970,15 +972,15 @@ components:
           description: URL to the current page of results.
           examples: ["/products", "/products?page=2&category=Stationery"]
         next:
-          type: [string, 'null']
+          type: string
           format: uri-reference
-          description: URL to the next page (null if none).
-          examples: ["/products?page=2", null]
+          description: URL to the next page (omit if none).
+          examples: ["/products?page=2"]
         prev:
-          type: [string, 'null']
+          type: string
           format: uri-reference
-          description: URL to the previous page (null if none).
-          examples: ["/products?page=1", null]
+          description: URL to the previous page (omit if none).
+          examples: ["/products?page=1"]
 
   responses:
     ErrorResponse:
@@ -989,7 +991,8 @@ components:
             type: object
             properties:
               data:
-                type: 'null'
+                type: object
+                additionalProperties: true
               errors:
                 type: array
                 items:
