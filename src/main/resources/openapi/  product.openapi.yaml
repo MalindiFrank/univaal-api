@@ -1,0 +1,77 @@
+openapi: 3.1.0
+info:
+  title: UniVaal Product API
+  version: 1.0.0
+servers:
+  - url: https://api.univaal.example
+
+paths:
+  /products:
+    get:
+      tags: [public]
+      summary: Get product catalog
+      description: Returns all active products (each product may include multiple images).
+      responses:
+        '200':
+          description: Products list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: './components/common.yaml#/components/schemas/Product'
+                  meta:
+                    $ref: './components/common.yaml#/components/schemas/Meta'
+                  links:
+                    $ref: './components/common.yaml#/components/schemas/Links'
+                required: [data]
+              examples:
+                sample:
+                  value:
+                    data:
+                      - id: prod_001
+                        name: A4 Notebook
+                        description: 80 pages notebook
+                        category: Stationery
+                        price_cents: 2500
+                        currency: ZAR
+                        active: true
+                        createdAt: '2026-01-04T10:00:00Z'
+                        images:
+                          - url: https://cdn.univaal.co.za/products/prod_001/main.webp
+                            alt: A4 Notebook front
+                            position: 0
+                            meta: { width: 1200, height: 1600, format: webp }
+                    meta: { total: 1, page: 1, limit: 50, currency: ZAR }
+                    links: { self: /products, next: null, prev: null }
+
+  /products/{productId}:
+    parameters:
+      - name: productId
+        in: path
+        required: true
+        schema: { type: string }
+    get:
+      tags: [public]
+      summary: Get product by id
+      responses:
+        '200':
+          description: Product
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: './components/common.yaml#/components/schemas/Product'
+                  meta:
+                    $ref: './components/common.yaml#/components/schemas/Meta'
+                  links:
+                    $ref: './components/common.yaml#/components/schemas/Links'
+                required: [data]
+        '404':
+          $ref: './components/common.yaml#/components/responses/ErrorResponse'
+

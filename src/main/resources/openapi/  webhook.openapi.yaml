@@ -1,0 +1,32 @@
+openapi: 3.1.0
+info:
+  title: UniVaal Webhook API
+  version: 1.0.0
+servers:
+  - url: https://api.univaal.example
+
+paths:
+  /webhooks/payments:
+    post:
+      tags: [webhook]
+      summary: Payment provider webhook
+      description: Provider calls this endpoint to notify about payment events. Validate signature and create Order once payment is confirmed.
+      parameters:
+        - name: X-Webhook-Signature
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/common.yaml#/components/schemas/PaymentWebhookPayload'
+      responses:
+        '200':
+          description: Processed
+          content:
+            application/json:
+              schema:
+                $ref: './components/common.yaml#/components/schemas/ApiResponse'
+

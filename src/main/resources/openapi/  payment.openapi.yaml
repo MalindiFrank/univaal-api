@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  title: UniVaal Payment API
+  version: 1.0.0
+servers:
+  - url: https://api.univaal.example
+
+paths:
+  /payments/session:
+    post:
+      tags: [public]
+      summary: Create payment session (PendingPayment)
+      description: Create a pending payment attempt. Returns provider redirect info. Backend will store a PendingPayment and idempotencyKey.
+      parameters:
+        - $ref: './components/common.yaml#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/common.yaml#/components/schemas/PaymentSessionRequest'
+      responses:
+        '201':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: './components/common.yaml#/components/schemas/PaymentSessionResponse'
+        '400':
+          $ref: './components/common.yaml#/components/responses/ErrorResponse'
+
+  /payments/confirm:
+    post:
+      tags: [public]
+      summary: Client-side payment confirmation (optional)
+      description: Optional endpoint used if frontend collects a payment token that server must confirm. Final order creation should be authoritative via webhook.
+      parameters:
+        - $ref: './components/common.yaml#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/common.yaml#/components/schemas/PaymentConfirmRequest'
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    examples: [processing]
+
